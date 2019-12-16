@@ -10,8 +10,7 @@ import (
 	"github.com/go-redis/redis/v7"
 )
 
-
-func main(){
+func main() {
 
 	fmt.Println("这是一个订阅者")
 
@@ -25,7 +24,7 @@ func main(){
 	// redis订阅
 	Subscribe(client)
 
-	client.Close();
+	client.Close()
 
 }
 
@@ -33,22 +32,20 @@ func main(){
  * client redis连接对象
  * 正则匹配 mychannel 渠道
  */
-func Subscribe(client *redis.Client){
+func Subscribe(client *redis.Client) {
 
 	// 订阅mychannel 确定
 	pubsub := client.PSubscribe("mychannel*")
 
 	// 阻塞程序
-	for {
-		_, err := pubsub.Receive()
-		if err != nil {
+	_, err := pubsub.Receive()
+	if err != nil {
 
-			return
-		}
-		ch := pubsub.Channel()
-		for msg := range ch {
-			fmt.Println(msg.Channel, msg.Payload, "\r\n")
-		}
+		return
+	}
+	ch := pubsub.Channel()
+	for msg := range ch {
+		fmt.Println(msg.Channel, msg.Payload, "\r\n")
 	}
 
 }
