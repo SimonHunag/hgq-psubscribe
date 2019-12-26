@@ -1,8 +1,7 @@
 package psubscribe
 
 import (
-	"bytes"
-	"encoding/gob"
+	"encoding/json"
 	"fmt"
 	. "github.com/go-redis/redis/v7"
 	"testing"
@@ -31,19 +30,19 @@ type GoGoHandle struct {
 }
 
 type Struct1 struct {
-	A int64
-	B int64
-	C int64
+	A string            `json:"A"`
+	B string            `json:"B"`
+	C string            `json:"C"`
+	D map[string]string `json:"D"`
 }
 
 func (handle *GoGoHandle) exec(message *Message) (bool, error) {
 
-	decoder := gob.NewDecoder(bytes.NewReader([]byte(message.Payload))) //创建解密器
+	var s1 Struct1
+	json.Unmarshal([]byte(message.Payload), &s1)
 
-	var s2 Struct1
-	decoder.Decode(&s2) //解密
+	fmt.Println("Go handle", message.Channel, s1, "\n\r")
 
-	fmt.Println("Go handle", message.Channel, s2, "\n\r")
 	return false, nil
 }
 
